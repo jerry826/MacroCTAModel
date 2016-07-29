@@ -43,10 +43,13 @@ def initialize(start='2007-01-01', end=date.today(), csv="code2.csv"):
 
         df = pd.concat([raw_data_old, raw_data_new])
         df.to_csv(path + '\\raw_data.csv', encoding='utf-8')
+        print(last_update_day)
+        print(today)
 
 
     else:
         # 重建数据
+        print('new data')
         date_list = w.tdays(start, end, "Days=Weekdays").Data[0]
         # 初始化DataFrame
         data = pd.DataFrame(index=w.tdays(start, end, "Days=Weekdays").Data)
@@ -72,7 +75,7 @@ def initialize(start='2007-01-01', end=date.today(), csv="code2.csv"):
 
         elif idx == 3:
             df = data_update3(df)
-            print(df)
+
         elif idx == 4:
             df = data_update4(df)
 
@@ -101,12 +104,13 @@ def initialize(start='2007-01-01', end=date.today(), csv="code2.csv"):
         # data[df.columns] = df
 
         data_daily = df.ffill()
-        data_daily.to_csv(path + '\\data\\daily_data.csv', encoding='utf-8')
+        data_daily.to_csv(path + '\\data\\daily_data.csv', encoding='GBK')
         data_weekly = df.resample('w', how='last').ffill()
-        data_weekly.to_csv(path + '\\data\\weekly_data.csv', encoding='utf-8')
+        data_weekly.to_csv(path + '\\data\\weekly_data.csv', encoding='GBK')
         data_monthly = df.resample('m', how='last').ffill()
-        data_monthly.to_csv(path + '\\data\\monthly_data.csv', encoding='utf-8')
+        data_monthly.to_csv(path + '\\data\\monthly_data.csv', encoding='GBK')
 
+    print(df)
     return df
 
 
@@ -138,6 +142,11 @@ def data_update2(df):
     # 获取外汇数据
     raw_fx = w.wsd("USDCNY.EX", "close", "2001-01-01", date.today(), "Period=d")
     fx = pd.DataFrame(raw_fx.Data, columns=raw_fx.Times).T
+    fx.index = map(lambda x: datetime.strftime(x,'%Y-%m-%d'),fx.index)
+    fx.index = map(lambda x: datetime.strptime(x,'%Y-%m-%d'),fx.index)
+
+    print(fx.index)
+    print(df.index)
     df['人民币美元中间价'] = fx
     # 整合废钢价格数据
     df['张家港废钢_含税总'] = np.where(df['张家港废钢_含税'].isnull(), df['张家港废钢_不含税'] * 1.17, df['张家港废钢_含税'])
@@ -266,7 +275,7 @@ def data_update8(df):
     # 重点钢材企业库存 2009年5月  月度
 
     # ['螺纹钢_库存','线材_库存','热卷板_库存','中板_库存','冷轧_库存','重点钢材企业库存']
-    df['社会总库存'] = df.iloc[:, 0:5].sum(axis=1)
+    df['社会总库存'] = df.loc[:, ['螺纹钢_库存','线材_库存','热卷板_库存','中板_库存','冷轧_库存']].sum(axis=1)
 
     return df
 
@@ -275,7 +284,7 @@ def data_update9(df):
     # 2012年8月 周数据
     # ['全国高炉开工率','全国高炉检修容积','全国高炉检修量',
     #        '全国盈利钢厂','全国检修钢厂','唐山钢厂高炉开工率','唐山钢厂产能利用率' ]
-
+    df['全国高炉开工率']
 
     return df
 

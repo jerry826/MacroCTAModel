@@ -90,7 +90,7 @@ def get_data(contracts):
     return data
 
 def calculate(rr):
-    rr['profit'] = rr['RB_close']/1.17-1.6*rr['I_close']/1.17-0.55*rr['J_close']/1.17
+    rr['profit'] = rr['RB_close']/1.17-1.6*rr['I_close']/1.17-0.55*rr['J_close']/1.17-560
     # rb/1.17-(1.6*i/1.17+0.55*j/1.17+560)
     return rr
 
