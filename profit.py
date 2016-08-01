@@ -91,6 +91,8 @@ def get_data(contracts):
 
 def calculate(rr):
     rr['profit'] = rr['RB_close']/1.17-1.6*rr['I_close']/1.17-0.55*rr['J_close']/1.17-560
+    rr['profit_lag'] = rr['RB_pre_close']/1.17-1.6*rr['I_pre_close']/1.17-0.55*rr['J_pre_close']/1.17-560
+    rr['ret'] = rr['profit']/rr['profit_lag']-1
     # rb/1.17-(1.6*i/1.17+0.55*j/1.17+560)
     return rr
 
